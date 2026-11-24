@@ -1,0 +1,630 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kepo ya</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    color: white;
+    background: linear-gradient(-45deg,
+    #ff80b5,#ffb6d9,#d9a0ff,#ff69b4);
+    background-size: 400% 400%;
+    animation: bgMove 10s ease infinite;
+}
+
+@keyframes bgMove {
+    0% {background-position:0% 50%;}
+    50% {background-position:100% 50%;}
+    100% {background-position:0% 50%;}
+}
+
+/* NAVBAR */
+
+.navbar {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:20px 8%;
+    position:relative;
+    z-index:10;
+}
+
+.logo {
+    font-size:25px;
+    font-weight:900;
+    text-shadow:0 0 15px white;
+}
+
+.music-btn {
+    padding:12px 23px;
+    border:2px solid white;
+    border-radius:30px;
+    color:white;
+    background:#ff1493;
+    cursor:pointer;
+    font-weight:bold;
+    transition:.3s;
+}
+
+.music-btn:hover {
+    transform:scale(1.08);
+    background:#ff65b0;
+}
+
+/* CONTAINER */
+
+.container {
+    min-height:85vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:25px 15px 50px;
+    position:relative;
+    z-index:2;
+}
+
+.card {
+    width:100%;
+    max-width:650px;
+    padding:45px 25px;
+    text-align:center;
+    border-radius:35px;
+    background:rgba(255,255,255,.25);
+    backdrop-filter:blur(15px);
+    border:2px solid white;
+    box-shadow:0 0 40px #ff1493;
+    animation:floating 4s infinite ease-in-out;
+}
+
+@keyframes floating {
+    0%,100% {transform:translateY(0);}
+    50% {transform:translateY(-10px);}
+}
+
+.small-title {
+    letter-spacing:5px;
+    font-size:13px;
+    font-weight:bold;
+}
+
+h1 {
+    font-size:clamp(45px,10vw,80px);
+    font-weight:900;
+    margin:15px 0;
+    text-shadow:0 0 15px white,0 0 35px #ff1493;
+    animation:glow 2s infinite alternate;
+}
+
+@keyframes glow {
+    from {filter:brightness(1);}
+    to {filter:brightness(1.5);}
+}
+
+.subtitle {
+    font-size:19px;
+    letter-spacing:4px;
+    font-weight:bold;
+}
+
+/* FOTO ROVENA */
+
+.photo-frame {
+    width:230px;
+    height:230px;
+    margin:30px auto;
+    padding:7px;
+    border-radius:50%;
+    background:linear-gradient(45deg,
+    white,#ff1493,#ffd6ed);
+    box-shadow:0 0 35px #ff1493;
+    animation:rotate 8s linear infinite;
+}
+
+.photo-frame img {
+    width:100%;
+    height:100%;
+    border-radius:50%;
+    border:4px solid white;
+    object-fit:cover;
+    object-position:center 35%;
+    display:block;
+}
+
+@keyframes rotate {
+    to {transform:rotate(360deg);}
+}
+
+/* BADGE */
+
+.badge {
+    display:inline-block;
+    padding:12px 25px;
+    border-radius:30px;
+    background:#ff1493;
+    box-shadow:0 0 20px #ff1493;
+    font-size:13px;
+    font-weight:bold;
+}
+
+/* TYPING */
+
+.typing {
+    margin:22px 0;
+    min-height:30px;
+    font-size:16px;
+    font-weight:600;
+}
+
+.quote {
+    font-size:14px;
+    margin:15px 0;
+}
+
+/* ENVELOPE */
+
+.envelope {
+    font-size:65px;
+    display:inline-block;
+    cursor:pointer;
+    margin:15px;
+    animation:shake 1.5s infinite;
+}
+
+@keyframes shake {
+    0%,100% {transform:rotate(-8deg);}
+    50% {transform:rotate(8deg);}
+}
+
+/* BUTTON */
+
+.buttons {
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:15px;
+    margin-top:25px;
+}
+
+.btn {
+    padding:14px 25px;
+    border:2px solid white;
+    border-radius:30px;
+    background:#ff2995;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.3s;
+    box-shadow:0 0 15px #ff1493;
+}
+
+.btn:hover {
+    transform:scale(1.1) translateY(-5px);
+    background:#ff65b0;
+}
+
+.footer {
+    margin-top:30px;
+    font-size:12px;
+    line-height:2;
+}
+
+/* EMOJI BERTERBANGAN */
+
+.floating {
+    position:fixed;
+    bottom:-60px;
+    pointer-events:none;
+    z-index:1;
+    animation:fly linear forwards;
+}
+
+@keyframes fly {
+    0% {transform:translateY(0) rotate(0);opacity:0;}
+    15% {opacity:1;}
+    100% {
+        transform:translateY(-115vh) rotate(360deg);
+        opacity:0;
+    }
+}
+
+/* POPUP */
+
+.popup {
+    position:fixed;
+    inset:0;
+    z-index:20;
+    display:none;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+    background:rgba(60,0,40,.7);
+}
+
+.popup-content {
+    max-width:400px;
+    width:100%;
+    padding:35px 25px;
+    border-radius:30px;
+    background:#fff0f8;
+    color:#ff2995;
+    text-align:center;
+    animation:popupShow .5s ease;
+}
+
+@keyframes popupShow {
+    from {transform:scale(.3);opacity:0;}
+    to {transform:scale(1);opacity:1;}
+}
+
+.popup-content h2 {
+    margin-bottom:15px;
+}
+
+.popup-content p {
+    font-size:14px;
+    line-height:1.9;
+}
+
+.close {
+    padding:12px 28px;
+    margin-top:20px;
+    border:none;
+    border-radius:25px;
+    background:#ff2995;
+    color:white;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+/* EFEK BINTANG */
+
+.sparkle {
+    position:fixed;
+    z-index:30;
+    pointer-events:none;
+    animation:sparkle .8s forwards;
+}
+
+@keyframes sparkle {
+    from {transform:scale(0);opacity:1;}
+    to {
+        transform:scale(2) translateY(-20px);
+        opacity:0;
+    }
+}
+
+/* RESPONSIVE */
+
+@media(max-width:500px) {
+    .navbar {
+        padding:18px 5%;
+    }
+
+    .logo {
+        font-size:19px;
+    }
+
+    .music-btn {
+        padding:10px 13px;
+        font-size:11px;
+    }
+
+    .card {
+        padding:30px 15px;
+    }
+
+    .photo-frame {
+        width:180px;
+        height:180px;
+    }
+
+    .subtitle {
+        font-size:14px;
+    }
+
+    .small-title {
+        font-size:10px;
+        letter-spacing:3px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+
+<div class="navbar">
+    <div class="logo">🎀 ROVENA</div>
+
+    <button class="music-btn"
+    id="musicBtn"
+    onclick="toggleMusic()">
+        🎵 MUSIC OFF
+    </button>
+</div>
+
+<!-- HALAMAN UTAMA -->
+
+<div class="container">
+<div class="card">
+
+    <div class="small-title">
+        WELCOME TO MY LITTLE WORLD
+    </div>
+
+    <h1>ROVENA</h1>
+
+    <div class="subtitle">
+        💗 BOCIL 2010 💗
+    </div>
+
+ <div class="subtitle">
+        💗 Age 16 years 💗
+    </div>
+
+
+	 <div class="subtitle">
+        💗 Height 151 cm katanya sih 🤣🤣 💗
+    </div>
+
+    <!-- FOTO ROVENA -->
+
+    <div class="photo-frame">
+        <img
+        src="./Rovena.PNG"
+        alt="Foto Rovena"
+        onerror="this.onerror=null;this.src='https://placehold.co/300x300/ffb6d9/ffffff?text=ROVENA';">
+    </div>
+
+    <div class="badge">
+        🌸 Orang Jumpa Polo 🌸
+    </div>
+
+    <div class="typing" id="typing"></div>
+
+    <p class="quote">
+        "Waras kadang-kadang." 🤣
+    </p>
+
+    <div class="envelope" onclick="openLetter()">
+        💌
+    </div>
+
+    <p style="font-size:12px">
+        Klik amplop untuk membuka pesan rahasia!
+    </p>
+
+    <div class="buttons">
+        <button class="btn" onclick="openAbout()">
+            💖 ABOUT ME
+        </button>
+
+        <button class="btn" onclick="surprise()">
+            🎉 SURPRISE!
+        </button>
+    </div>
+
+    <div class="footer">
+        ✨ LIMITED EDITION SINCE 2010 ✨
+        <br>
+        Made with 💗 for Rovena
+    </div>
+
+</div>
+</div>
+
+<!-- POPUP -->
+
+<div class="popup" id="popup">
+    <div class="popup-content">
+
+        <h2 id="popupTitle">
+             HALLO ROVENA
+        </h2>
+
+        <p id="popupText"></p>
+
+        <button class="close" onclick="closePopup()">
+            CLOSE 💕
+        </button>
+
+    </div>
+</div>
+
+<!-- MUSIK -->
+
+<audio id="music" loop preload="auto">
+    <source
+    src="TULUS - Jatuh Suka (Official Lyric Video).mp3"
+    type="audio/mpeg">
+</audio>
+
+<script>
+
+// TEKS BERGANTI OTOMATIS
+
+const words = [
+    "Welcome to Rovena's World! 💗",
+    "Bocil 2010 paling Lucu! 🎀",
+    "Cantik, lucu dan apa ya?! ✨",
+    "Keep smiling, Princess! 🌸"
+];
+
+let wordIndex = 0;
+let charIndex = 0;
+let deleting = false;
+
+function typeEffect() {
+    const typing = document.getElementById("typing");
+    const current = words[wordIndex];
+
+    if (!deleting) {
+        typing.textContent =
+        current.substring(0,charIndex+1);
+
+        charIndex++;
+
+        if (charIndex === current.length) {
+            deleting = true;
+            setTimeout(typeEffect,1300);
+            return;
+        }
+    } else {
+        typing.textContent =
+        current.substring(0,charIndex-1);
+
+        charIndex--;
+
+        if (charIndex === 0) {
+            deleting = false;
+            wordIndex = (wordIndex+1)%words.length;
+        }
+    }
+
+    setTimeout(typeEffect,deleting?45:90);
+}
+
+typeEffect();
+
+
+// EMOJI BERTERBANGAN
+
+const emojis = [
+    "💗","💕","💖","🌸","🦋","✨","🎀"
+];
+
+function createFloating() {
+    const item = document.createElement("div");
+
+    item.className = "floating";
+    item.textContent =
+    emojis[Math.floor(Math.random()*emojis.length)];
+
+    item.style.left = Math.random()*100+"vw";
+    item.style.fontSize =
+    (18+Math.random()*25)+"px";
+
+    item.style.animationDuration =
+    (5+Math.random()*5)+"s";
+
+    document.body.appendChild(item);
+
+    setTimeout(() => item.remove(),11000);
+}
+
+setInterval(createFloating,500);
+
+
+// EFEK BINTANG
+
+document.addEventListener("click",function(e) {
+    const star = document.createElement("span");
+
+    star.className = "sparkle";
+    star.textContent = "✨";
+    star.style.left = e.clientX+"px";
+    star.style.top = e.clientY+"px";
+
+    document.body.appendChild(star);
+
+    setTimeout(() => star.remove(),800);
+});
+
+
+// ABOUT ME
+
+function openAbout() {
+    showPopup(
+        "💖 ABOUT ROVENA",
+        "Haiii! Selamat datang di dunia kecil Rovena! 💗 Bocil 2010 yang penuh keceriaan, kelucuan, dan kejutan. Jangan lupa bahagia yaaa! 🌸"
+    );
+}
+
+
+// SURPRISE
+
+function surprise() {
+    for(let i=0;i<35;i++) {
+        setTimeout(createFloating,i*60);
+    }
+
+    showPopup(
+        "🎉 SURPRISEEEE!",
+        "Yeayyy! Kamu menemukan kejutan rahasia! 💗 Semoga hari-harimu selalu penuh kebahagiaan, dan hal menyenangkan! 🦋"
+    );
+}
+
+
+// SURAT RAHASIA
+
+function openLetter() {
+    showPopup(
+        "💌 A LITTLE MESSAGE",
+        "Dear Rovena... 💗 Semangat ya Buat Ujian Akhir Semesternya ya Belajar yang rajin Biar dapat nilai yang memuaskan😊😊. 🎀"
+    );
+}
+
+
+// POPUP
+
+function showPopup(title,message) {
+    document.getElementById("popupTitle").textContent = title;
+    document.getElementById("popupText").textContent = message;
+    document.getElementById("popup").style.display = "flex";
+}
+
+function closePopup() {
+    document.getElementById("popup").style.display = "none";
+}
+
+
+// MUSIK ON/OFF
+
+const music = document.getElementById("music");
+const musicBtn = document.getElementById("musicBtn");
+
+function updateMusicButton() {
+    musicBtn.textContent = music.paused
+        ? "🎵 MUSIC OFF"
+        : "🎵 MUSIC ON";
+}
+
+async function toggleMusic() {
+    if(music.paused) {
+        try {
+            await music.play();
+            updateMusicButton();
+        } catch(error) {
+            alert(
+                "Musik gagal diputar. Periksa nama dan lokasi file MP3."
+            );
+            console.error(error);
+        }
+    } else {
+        music.pause();
+        updateMusicButton();
+    }
+}
+
+music.addEventListener("play",updateMusicButton);
+music.addEventListener("pause",updateMusicButton);
+
+</script>
+
+</body>
+</html>
