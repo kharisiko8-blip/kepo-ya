@@ -95,6 +95,7 @@ body {
 
 .start-countdown-btn:disabled {
     cursor: default;
+    opacity: .7;
 }
 
 @keyframes countZoom {
@@ -635,6 +636,8 @@ const countdownMessage =
 const startCountdownBtn =
     document.getElementById("startCountdownBtn");
 
+let countdownStarted = false;
+
 
 // EMOJI BETERBANGAN DI COUNTDOWN
 
@@ -675,10 +678,29 @@ countdownEmojiInterval = setInterval(createCountdownEmoji, 350);
 
 
 // SUARA COUNTDOWN INDONESIA
+// COUNTDOWN TETAP LANJUT JIKA SUARA BERMASALAH
 
 function suaraCountdown(teks) {
 
     return new Promise((resolve) => {
+
+        if (
+            !window.speechSynthesis ||
+            typeof SpeechSynthesisUtterance === "undefined"
+        ) {
+            resolve();
+            return;
+        }
+
+        let selesai = false;
+
+        function lanjut() {
+            if (selesai) return;
+
+            selesai = true;
+            clearTimeout(pengaman);
+            resolve();
+        }
 
         const suara = new SpeechSynthesisUtterance(teks);
 
@@ -687,10 +709,16 @@ function suaraCountdown(teks) {
         suara.rate = 0.8;
         suara.volume = 1;
 
-        suara.onend = resolve;
-        suara.onerror = resolve;
+        suara.onend = lanjut;
+        suara.onerror = lanjut;
 
-        speechSynthesis.speak(suara);
+        const pengaman = setTimeout(lanjut, 3000);
+
+        try {
+            speechSynthesis.speak(suara);
+        } catch(error) {
+            lanjut();
+        }
     });
 }
 
@@ -698,12 +726,22 @@ function jeda(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+
+// MULAI COUNTDOWN
+
 async function mulaiCountdown() {
 
+    if (countdownStarted) return;
+
+    countdownStarted = true;
+
     startCountdownBtn.disabled = true;
+    startCountdownBtn.textContent = "TUNGGU YA 💗";
     startCountdownBtn.style.display = "none";
 
-    speechSynthesis.cancel();
+    if (window.speechSynthesis) {
+        speechSynthesis.cancel();
+    }
 
     // MUSIK DIMULAI DALAM KEADAAN SENYAP
 
@@ -822,8 +860,6 @@ const emojis = [
 
 function createFloating() {
 
-    // Jangan muncul selama countdown
-
     if (document.getElementById("countdownScreen")) return;
 
     const item = document.createElement("div");
@@ -854,8 +890,8 @@ setInterval(createFloating,500);
 // EMOJI TAMBAHAN SAAT DIKLIK ATAU DISENTUH
 
 const clickEmojis = [
-    "😁", "💕", "😄", "🌸","🎶"
-    "🦋", "✨", "🎀", "💝","😉"
+    "😁", "💕", "😄", "🌸", "🎶",
+    "🦋", "✨", "🎀", "💝", "😉"
 ];
 
 document.addEventListener("click",function(e) {
