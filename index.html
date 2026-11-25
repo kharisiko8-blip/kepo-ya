@@ -42,6 +42,7 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    overflow: hidden;
     background: linear-gradient(-45deg,
     #ff80b5,#d9a0ff,#ffb6d9,#ff69b4);
     background-size: 400% 400%;
@@ -54,6 +55,8 @@ body {
     font-weight: 900;
     color: white;
     text-shadow: 0 0 20px white,0 0 45px #ff1493;
+    position: relative;
+    z-index: 2;
 }
 
 .countdown-message {
@@ -64,6 +67,8 @@ body {
     color: white;
     text-shadow: 0 0 15px #ff1493;
     padding: 0 15px;
+    position: relative;
+    z-index: 2;
 }
 
 .start-countdown-btn {
@@ -79,6 +84,8 @@ body {
     font-family: 'Poppins', sans-serif;
     font-size: 14px;
     transition: .3s;
+    position: relative;
+    z-index: 2;
 }
 
 .start-countdown-btn:hover {
@@ -102,6 +109,62 @@ body {
     100% {
         transform: scale(1);
         opacity: 1;
+    }
+}
+
+/* EMOJI COUNTDOWN DAN BERANDA */
+
+.countdown-emoji,
+.home-floating-emoji {
+    position: fixed;
+    bottom: -60px;
+    pointer-events: none;
+    animation: homeEmojiFly linear forwards;
+}
+
+.countdown-emoji {
+    z-index: 1;
+}
+
+.home-floating-emoji {
+    z-index: 1;
+}
+
+@keyframes homeEmojiFly {
+    0% {
+        transform: translateY(0) rotate(0deg) scale(.6);
+        opacity: 0;
+    }
+
+    15% {
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(-110vh) rotate(360deg) scale(1.3);
+        opacity: 0;
+    }
+}
+
+/* EMOJI SAAT DIKLIK */
+
+.click-emoji {
+    position: fixed;
+    pointer-events: none;
+    z-index: 99998;
+    font-size: 25px;
+    animation: emojiClick 1.2s ease-out forwards;
+}
+
+@keyframes emojiClick {
+    0% {
+        opacity: 1;
+        transform: translateY(0) scale(.5) rotate(0deg);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-100px) scale(1.5) rotate(40deg);
     }
 }
 
@@ -293,25 +356,6 @@ h1 {
     margin-top:30px;
     font-size:12px;
     line-height:2;
-}
-
-/* EMOJI BERTERBANGAN */
-
-.floating {
-    position:fixed;
-    bottom:-60px;
-    pointer-events:none;
-    z-index:1;
-    animation:fly linear forwards;
-}
-
-@keyframes fly {
-    0% {transform:translateY(0) rotate(0);opacity:0;}
-    15% {opacity:1;}
-    100% {
-        transform:translateY(-115vh) rotate(360deg);
-        opacity:0;
-    }
 }
 
 /* POPUP */
@@ -577,7 +621,7 @@ music.addEventListener("play", updateMusicButton);
 music.addEventListener("pause", updateMusicButton);
 
 
-// COUNTDOWN 3 2 1 + SUARA INDONESIA
+// COUNTDOWN
 
 const countdownScreen =
     document.getElementById("countdownScreen");
@@ -591,8 +635,51 @@ const countdownMessage =
 const startCountdownBtn =
     document.getElementById("startCountdownBtn");
 
+
+// EMOJI BETERBANGAN DI COUNTDOWN
+
+const countdownEmojis = [
+    "💗", "💕", "💖", "🌸", "🦋",
+    "✨", "🎀", "💝", "🥳", "😊"
+];
+
+let countdownEmojiInterval;
+
+function createCountdownEmoji() {
+
+    if (!document.getElementById("countdownScreen")) return;
+
+    const emoji = document.createElement("div");
+
+    emoji.className = "countdown-emoji";
+
+    emoji.textContent =
+        countdownEmojis[
+            Math.floor(Math.random() * countdownEmojis.length)
+        ];
+
+    emoji.style.left = Math.random() * 100 + "vw";
+
+    emoji.style.fontSize =
+        (20 + Math.random() * 25) + "px";
+
+    emoji.style.animationDuration =
+        (4 + Math.random() * 4) + "s";
+
+    countdownScreen.appendChild(emoji);
+
+    setTimeout(() => emoji.remove(), 8500);
+}
+
+countdownEmojiInterval = setInterval(createCountdownEmoji, 350);
+
+
+// SUARA COUNTDOWN INDONESIA
+
 function suaraCountdown(teks) {
+
     return new Promise((resolve) => {
+
         const suara = new SpeechSynthesisUtterance(teks);
 
         suara.lang = "id-ID";
@@ -618,8 +705,8 @@ async function mulaiCountdown() {
 
     speechSynthesis.cancel();
 
-    // MUSIK DIMULAI DI DALAM KLIK TOMBOL,
-    // TETAPI SUARANYA DIAM SELAMA COUNTDOWN.
+    // MUSIK DIMULAI DALAM KEADAAN SENYAP
+
     music.volume = 0;
 
     const musicStarted = music.play()
@@ -647,7 +734,7 @@ async function mulaiCountdown() {
         await jeda(300);
     }
 
-    // WELCOME TO ROVENA TANPA SUARA
+    // WELCOME TO ROVENA
 
     countdownNumber.textContent = "😊😁🥳";
     countdownMessage.textContent = "WELCOME TO ROVENA";
@@ -662,9 +749,11 @@ async function mulaiCountdown() {
 
     await jeda(800);
 
+    clearInterval(countdownEmojiInterval);
+
     countdownScreen.remove();
 
-    // MUSIK TERDENGAR SAAT HALAMAN FOTO MUNCUL
+    // MUSIK TERDENGAR SAAT BERANDA MUNCUL
 
     if (await musicStarted) {
         music.volume = 1;
@@ -695,7 +784,7 @@ function typeEffect() {
     if (!deleting) {
 
         typing.textContent =
-        current.substring(0,charIndex+1);
+            current.substring(0,charIndex+1);
 
         charIndex++;
 
@@ -708,7 +797,7 @@ function typeEffect() {
     } else {
 
         typing.textContent =
-        current.substring(0,charIndex-1);
+            current.substring(0,charIndex-1);
 
         charIndex--;
 
@@ -724,40 +813,78 @@ function typeEffect() {
 typeEffect();
 
 
-// EMOJI BERTERBANGAN
+// EMOJI BETERBANGAN DI BERANDA
 
 const emojis = [
-    "💗","💕","💖","🌸","🦋","✨","🎀"
+    "💗", "💕", "💖", "🌸", "🦋",
+    "✨", "🎀", "💝", "🥰", "🌷"
 ];
 
 function createFloating() {
 
+    // Jangan muncul selama countdown
+
+    if (document.getElementById("countdownScreen")) return;
+
     const item = document.createElement("div");
 
-    item.className = "floating";
+    item.className = "home-floating-emoji";
 
     item.textContent =
-    emojis[Math.floor(Math.random()*emojis.length)];
+        emojis[Math.floor(Math.random()*emojis.length)];
 
     item.style.left = Math.random()*100+"vw";
 
     item.style.fontSize =
-    (18+Math.random()*25)+"px";
+        (18+Math.random()*25)+"px";
 
     item.style.animationDuration =
-    (5+Math.random()*5)+"s";
+        (5+Math.random()*5)+"s";
 
     document.body.appendChild(item);
 
     setTimeout(() => item.remove(),11000);
 }
 
+// Emoji otomatis setiap 500 milidetik
+
 setInterval(createFloating,500);
+
+
+// EMOJI TAMBAHAN SAAT DIKLIK ATAU DISENTUH
+
+const clickEmojis = [
+    "😁", "💕", "😄", "🌸","🎶"
+    "🦋", "✨", "🎀", "💝","😉"
+];
+
+document.addEventListener("click",function(e) {
+
+    if (document.getElementById("countdownScreen")) return;
+
+    const emoji = document.createElement("span");
+
+    emoji.className = "click-emoji";
+
+    emoji.textContent =
+        clickEmojis[
+            Math.floor(Math.random()*clickEmojis.length)
+        ];
+
+    emoji.style.left = e.clientX+"px";
+    emoji.style.top = e.clientY+"px";
+
+    document.body.appendChild(emoji);
+
+    setTimeout(() => emoji.remove(),1200);
+});
 
 
 // EFEK BINTANG
 
 document.addEventListener("click",function(e) {
+
+    if (document.getElementById("countdownScreen")) return;
 
     const star = document.createElement("span");
 
@@ -776,8 +903,9 @@ document.addEventListener("click",function(e) {
 // ABOUT ME
 
 function openAbout() {
+
     showPopup(
-        "💖 ABOUT ROVENA",
+        "😁ABOUT ROVENA😁",
         "Haii Bocil 2010 yang penuh keceriaan, dan kelucuan. Kelihatannya diemm, padahal isi kepalanya ngajak jalan-jalan terus🤣🤣. 🌸"
     );
 }
@@ -792,8 +920,8 @@ function surprise() {
     }
 
     showPopup(
-        "🎉 SURPRISEEEE!",
-        "Yeayyy! Kamu Membukanya🥳🥳🥳! 💗 Semoga hari-harimu penuh kebahagiaan, dan hal-hal menyenangkan! 🦋"
+        "🎉SURPRISEEEE!🎉",
+        "Yeayyy! Kamu Membukanya🥳🥳🥳! 🦋 Semoga hari-harimu penuh kebahagiaan, dan hal-hal menyenangkan! 🦋"
     );
 }
 
@@ -801,9 +929,10 @@ function surprise() {
 // SURAT RAHASIA
 
 function openLetter() {
+
     showPopup(
         "💌 A LITTLE MESSAGE",
-        "Rovena B.R 💗 Semangat ya Buat Ujian Akhir Semesternya ya Belajar yang rajin Biar dapat nilai yang memuaskan😊😊. 🎀"
+        "Rovena B.R 😊😊 Semangat ya Buat Ujian Akhir Semesternya ya Belajar yang rajin Biar dapat nilai yang memuaskan😊😊. 🎀"
     );
 }
 
@@ -820,6 +949,7 @@ function showPopup(title,message) {
 }
 
 function closePopup() {
+
     document.getElementById("popup").style.display = "none";
 }
 
