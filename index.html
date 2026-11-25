@@ -110,10 +110,6 @@ body {
     bottom: -60px;
     pointer-events: none;
     animation: homeEmojiFly linear forwards;
-}
-
-.countdown-emoji,
-.home-floating-emoji {
     z-index: 1;
 }
 
@@ -129,7 +125,7 @@ body {
     }
 }
 
-/* EMOJI KLIK */
+/* EMOJI SAAT DIKLIK */
 
 .click-emoji {
     position: fixed;
@@ -331,10 +327,20 @@ h1 {
     background:#ff65b0;
 }
 
+/* FOOTER */
+
 .footer {
     margin-top:30px;
     font-size:12px;
     line-height:2;
+    text-align:center;
+}
+
+.footer-emojis {
+    display:block;
+    margin-top:5px;
+    font-size:20px;
+    letter-spacing:5px;
 }
 
 /* POPUP */
@@ -479,7 +485,7 @@ h1 {
         "Tumbuh dengan mimpi, berjalan dengan percaya diri."😊😊
     </p>
 
-     <p class="quote">
+    <p class="quote">
         "Semangat Ya Belajarnya Buat Meraih Cita-Cita Yang Diinginkan😉😉."😊😊
     </p>
 
@@ -494,12 +500,15 @@ h1 {
         <button class="btn" onclick="surprise()">🎉 SURPRISE!</button>
     </div>
 
+    <!-- FOOTER YANG SUDAH DIPERBAIKI -->
+
     <div class="footer">
-        ✨ Success is the sum of small efforts, repeated day in and day out ✨
+        🤗 Success is the sum of small efforts, repeated day in and day out 🤗
         <br>
-         with Rovena
-        <br>
-        😁😊😊😊
+        <span>with😊Rovena</span>
+        <span class="footer-emojis">
+            😁 😊 😊 😊
+        </span>
     </div>
 
 </div>
@@ -529,6 +538,7 @@ const music = document.getElementById("music");
 const musicBtn = document.getElementById("musicBtn");
 
 // SUARA START BALAPAN
+
 const suaraStart = new Audio("./suara-start-balapan.wav");
 suaraStart.preload = "auto";
 suaraStart.volume = 0.8;
@@ -689,7 +699,7 @@ async function mulaiCountdown() {
         await jeda(300);
     }
 
-    // WELCOME + SUARA START BERSAMAAN
+    // WELCOME + SUARA START
 
     countdownNumber.textContent = "😊😁🥳";
     countdownMessage.textContent = "WELCOME TO ROVENA";
@@ -698,7 +708,6 @@ async function mulaiCountdown() {
     void countdownNumber.offsetWidth;
     countdownNumber.style.animation = "countZoom .9s ease";
 
-    // PUTAR SUARA TANDA START BALAPAN
     suaraStart.currentTime = 0;
 
     suaraStart.play().catch(error => {
@@ -800,7 +809,7 @@ function createFloating() {
 setInterval(createFloating,500);
 
 
-// EMOJI TAMBAHAN SAAT DIKLIK
+// EMOJI TAMBAHAN SAAT DIKLIK ATAU DISENTUH
 
 const clickEmojis = [
     "😁", "💕", "😄", "🌸", "🎶",
