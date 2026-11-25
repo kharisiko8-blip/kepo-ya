@@ -32,6 +32,56 @@ body {
     100% {background-position:0% 50%;}
 }
 
+/* COUNTDOWN INTRO */
+
+.countdown-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(-45deg,
+    #ff80b5,#d9a0ff,#ffb6d9,#ff69b4);
+    background-size: 400% 400%;
+    animation: bgMove 5s ease infinite;
+    transition: opacity .8s ease;
+}
+
+.countdown-number {
+    font-size: clamp(100px,25vw,160px);
+    font-weight: 900;
+    color: white;
+    text-shadow: 0 0 20px white,0 0 45px #ff1493;
+    animation: countZoom .9s ease;
+}
+
+.countdown-message {
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: 4px;
+    text-align: center;
+    color: white;
+    text-shadow: 0 0 15px #ff1493;
+    padding: 0 15px;
+}
+
+@keyframes countZoom {
+    0% {
+        transform: scale(.2);
+        opacity: 0;
+    }
+    60% {
+        transform: scale(1.3);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
 /* NAVBAR */
 
 .navbar {
@@ -346,6 +396,15 @@ h1 {
 
 <body>
 
+<!-- COUNTDOWN INTRO -->
+
+<div class="countdown-screen" id="countdownScreen">
+    <div class="countdown-number" id="countdownNumber">3</div>
+    <div class="countdown-message" id="countdownMessage">
+        GET READY ✨
+    </div>
+</div>
+
 <!-- NAVBAR -->
 
 <div class="navbar">
@@ -373,12 +432,11 @@ h1 {
         💗 BOCIL 2010 💗
     </div>
 
- <div class="subtitle">
+    <div class="subtitle">
         💗 Age 16 years 💗
     </div>
 
-
-	 <div class="subtitle">
+    <div class="subtitle">
         💗 Height 151 cm katanya sih 🤣🤣 💗
     </div>
 
@@ -434,7 +492,7 @@ h1 {
     <div class="popup-content">
 
         <h2 id="popupTitle">
-             HALLO ROVENA
+            HALLO ROVENA
         </h2>
 
         <p id="popupText"></p>
@@ -456,10 +514,58 @@ h1 {
 
 <script>
 
+// COUNTDOWN 3 2 1
+
+const countdownScreen =
+    document.getElementById("countdownScreen");
+
+const countdownNumber =
+    document.getElementById("countdownNumber");
+
+const countdownMessage =
+    document.getElementById("countdownMessage");
+
+let countdown = 3;
+
+const countdownTimer = setInterval(() => {
+
+    countdown--;
+
+    if (countdown > 0) {
+
+        countdownNumber.textContent = countdown;
+
+        countdownNumber.style.animation = "none";
+        void countdownNumber.offsetWidth;
+        countdownNumber.style.animation = "countZoom .9s ease";
+
+    } else {
+
+        clearInterval(countdownTimer);
+
+        countdownNumber.textContent = "😁😁";
+        countdownMessage.textContent = "WELCOME TO ROVENA";
+
+        countdownNumber.style.animation = "countZoom .9s ease";
+
+        setTimeout(() => {
+
+            countdownScreen.style.opacity = "0";
+
+            setTimeout(() => {
+                countdownScreen.remove();
+            }, 800);
+
+        }, 1500);
+    }
+
+}, 1000);
+
+
 // TEKS BERGANTI OTOMATIS
 
 const words = [
-    "Welcome to  😊😊",
+    "Welcome to 😊😊",
     "Bocil 2010 paling Lucu! 🎀",
     "Cantik, lucu dan apa ya?! ✨",
     "Keep smiling, rovvv😄"
