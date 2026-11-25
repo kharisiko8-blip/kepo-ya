@@ -54,7 +54,6 @@ body {
     font-weight: 900;
     color: white;
     text-shadow: 0 0 20px white,0 0 45px #ff1493;
-    animation: countZoom .9s ease;
 }
 
 .countdown-message {
@@ -65,6 +64,30 @@ body {
     color: white;
     text-shadow: 0 0 15px #ff1493;
     padding: 0 15px;
+}
+
+.start-countdown-btn {
+    margin-top: 25px;
+    padding: 13px 28px;
+    border: 2px solid white;
+    border-radius: 30px;
+    background: #ff1493;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 0 20px #ff1493;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    transition: .3s;
+}
+
+.start-countdown-btn:hover {
+    transform: scale(1.08);
+    background: #ff65b0;
+}
+
+.start-countdown-btn:disabled {
+    cursor: default;
 }
 
 @keyframes countZoom {
@@ -399,10 +422,20 @@ h1 {
 <!-- COUNTDOWN INTRO -->
 
 <div class="countdown-screen" id="countdownScreen">
-    <div class="countdown-number" id="countdownNumber">3</div>
+
+    <div class="countdown-number" id="countdownNumber"></div>
+
     <div class="countdown-message" id="countdownMessage">
         GET READY ✨
     </div>
+
+    <button
+        class="start-countdown-btn"
+        id="startCountdownBtn"
+        onclick="mulaiCountdown()">
+        💗 MULAI
+    </button>
+
 </div>
 
 <!-- NAVBAR -->
@@ -514,7 +547,37 @@ h1 {
 
 <script>
 
-// COUNTDOWN 3 2 1
+// MUSIK
+
+const music = document.getElementById("music");
+const musicBtn = document.getElementById("musicBtn");
+
+function updateMusicButton() {
+    musicBtn.textContent = music.paused
+        ? "🎵 MUSIC OFF"
+        : "🎵 MUSIC ON";
+}
+
+async function toggleMusic() {
+    if (music.paused) {
+        try {
+            await music.play();
+            updateMusicButton();
+        } catch(error) {
+            alert("Musik gagal diputar. Periksa nama dan lokasi file MP3.");
+            console.error(error);
+        }
+    } else {
+        music.pause();
+        updateMusicButton();
+    }
+}
+
+music.addEventListener("play", updateMusicButton);
+music.addEventListener("pause", updateMusicButton);
+
+
+// COUNTDOWN 3 2 1 + SUARA INDONESIA
 
 const countdownScreen =
     document.getElementById("countdownScreen");
@@ -525,41 +588,90 @@ const countdownNumber =
 const countdownMessage =
     document.getElementById("countdownMessage");
 
-let countdown = 3;
+const startCountdownBtn =
+    document.getElementById("startCountdownBtn");
 
-const countdownTimer = setInterval(() => {
+function suaraCountdown(teks) {
+    return new Promise((resolve) => {
+        const suara = new SpeechSynthesisUtterance(teks);
 
-    countdown--;
+        suara.lang = "id-ID";
+        suara.pitch = 0.6;
+        suara.rate = 0.8;
+        suara.volume = 1;
 
-    if (countdown > 0) {
+        suara.onend = resolve;
+        suara.onerror = resolve;
 
-        countdownNumber.textContent = countdown;
+        speechSynthesis.speak(suara);
+    });
+}
+
+function jeda(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function mulaiCountdown() {
+
+    startCountdownBtn.disabled = true;
+    startCountdownBtn.style.display = "none";
+
+    speechSynthesis.cancel();
+
+    // MUSIK DIMULAI DI DALAM KLIK TOMBOL,
+    // TETAPI SUARANYA DIAM SELAMA COUNTDOWN.
+    music.volume = 0;
+
+    const musicStarted = music.play()
+        .then(() => true)
+        .catch(error => {
+            console.log("Musik belum bisa diputar:", error);
+            return false;
+        });
+
+    const angka = [
+        { nomor: "3", kata: "Tiga..." },
+        { nomor: "2", kata: "Dua..." },
+        { nomor: "1", kata: "Satu..." }
+    ];
+
+    for (const item of angka) {
+
+        countdownNumber.textContent = item.nomor;
 
         countdownNumber.style.animation = "none";
         void countdownNumber.offsetWidth;
         countdownNumber.style.animation = "countZoom .9s ease";
 
-    } else {
-
-        clearInterval(countdownTimer);
-
-        countdownNumber.textContent = "😁😁";
-        countdownMessage.textContent = "WELCOME TO ROVENA";
-
-        countdownNumber.style.animation = "countZoom .9s ease";
-
-        setTimeout(() => {
-
-            countdownScreen.style.opacity = "0";
-
-            setTimeout(() => {
-                countdownScreen.remove();
-            }, 800);
-
-        }, 1500);
+        await suaraCountdown(item.kata);
+        await jeda(300);
     }
 
-}, 1000);
+    // WELCOME TO ROVENA TANPA SUARA
+
+    countdownNumber.textContent = "😊😁🥳";
+    countdownMessage.textContent = "WELCOME TO ROVENA";
+
+    countdownNumber.style.animation = "none";
+    void countdownNumber.offsetWidth;
+    countdownNumber.style.animation = "countZoom .9s ease";
+
+    await jeda(1500);
+
+    countdownScreen.style.opacity = "0";
+
+    await jeda(800);
+
+    countdownScreen.remove();
+
+    // MUSIK TERDENGAR SAAT HALAMAN FOTO MUNCUL
+
+    if (await musicStarted) {
+        music.volume = 1;
+    }
+
+    updateMusicButton();
+}
 
 
 // TEKS BERGANTI OTOMATIS
@@ -576,10 +688,12 @@ let charIndex = 0;
 let deleting = false;
 
 function typeEffect() {
+
     const typing = document.getElementById("typing");
     const current = words[wordIndex];
 
     if (!deleting) {
+
         typing.textContent =
         current.substring(0,charIndex+1);
 
@@ -590,7 +704,9 @@ function typeEffect() {
             setTimeout(typeEffect,1300);
             return;
         }
+
     } else {
+
         typing.textContent =
         current.substring(0,charIndex-1);
 
@@ -615,13 +731,16 @@ const emojis = [
 ];
 
 function createFloating() {
+
     const item = document.createElement("div");
 
     item.className = "floating";
+
     item.textContent =
     emojis[Math.floor(Math.random()*emojis.length)];
 
     item.style.left = Math.random()*100+"vw";
+
     item.style.fontSize =
     (18+Math.random()*25)+"px";
 
@@ -639,10 +758,12 @@ setInterval(createFloating,500);
 // EFEK BINTANG
 
 document.addEventListener("click",function(e) {
+
     const star = document.createElement("span");
 
     star.className = "sparkle";
     star.textContent = "✨";
+
     star.style.left = e.clientX+"px";
     star.style.top = e.clientY+"px";
 
@@ -665,6 +786,7 @@ function openAbout() {
 // SURPRISE
 
 function surprise() {
+
     for(let i=0;i<35;i++) {
         setTimeout(createFloating,i*60);
     }
@@ -689,46 +811,17 @@ function openLetter() {
 // POPUP
 
 function showPopup(title,message) {
+
     document.getElementById("popupTitle").textContent = title;
+
     document.getElementById("popupText").textContent = message;
+
     document.getElementById("popup").style.display = "flex";
 }
 
 function closePopup() {
     document.getElementById("popup").style.display = "none";
 }
-
-
-// MUSIK ON/OFF
-
-const music = document.getElementById("music");
-const musicBtn = document.getElementById("musicBtn");
-
-function updateMusicButton() {
-    musicBtn.textContent = music.paused
-        ? "🎵 MUSIC OFF"
-        : "🎵 MUSIC ON";
-}
-
-async function toggleMusic() {
-    if(music.paused) {
-        try {
-            await music.play();
-            updateMusicButton();
-        } catch(error) {
-            alert(
-                "Musik gagal diputar. Periksa nama dan lokasi file MP3."
-            );
-            console.error(error);
-        }
-    } else {
-        music.pause();
-        updateMusicButton();
-    }
-}
-
-music.addEventListener("play",updateMusicButton);
-music.addEventListener("pause",updateMusicButton);
 
 </script>
 
